@@ -1,0 +1,105 @@
+html,
+body,
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Intro sides */
+.side {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 50%;
+  height: 100%;
+  text-align: center;
+  -webkit-backface-visibility: hidden;
+}
+
+.side-left .overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.side-left {
+  left: 0;
+  background: #47a3da;
+  color: #fff;
+  outline: 1px solid #47a3da; /* avoid gap */
+}
+
+.side-right {
+  right: 0;
+  background: #fff;
+  color: #47a3da;
+  outline: 1px solid #fff; /* avoid gap */
+}
+
+/* Intro content, profile image and name, back button */
+.intro-content-1 {
+  position: absolute;
+  top: 10%;
+  left: 30%;
+  padding: 0 1em;
+  width: 50%;
+  cursor: pointer;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.intro-content-2 {
+  position: absolute;
+  top: 30%;
+  left: 30%;
+  padding: 0 1em;
+  width: 50%;
+  cursor: pointer;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.intro-content-3 {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  padding: 0 1em;
+  width: 50%;
+  cursor: pointer;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.intro-content-4 {
+  position: absolute;
+  top: 70%;
+  left: 30%;
+  padding: 0 1em;
+  width: 50%;
+  cursor: pointer;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.intro-content-5 {
+  position: absolute;
+  top: 90%;
+  left: 30%;
+  padding: 0 1em;
+  width: 50%;
+  cursor: pointer;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+}
+.profile {
+  margin: 0 auto;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: #47a3da;
+}
+
+.profile img {
+  max-width: 100%;
+  border-radius: 50%;
+  opacity: 0.6;
+}
