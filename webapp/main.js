@@ -24,8 +24,6 @@ const items = [
   { name: "nothing" },
 ]
 
-// Number of classes to classify
-const NUM_CLASSES = 5;
 // Webcam Image size. Must be 227. 
 const IMAGE_SIZE = 227;
 // K value for KNN
@@ -44,7 +42,7 @@ class Main {
     this.videoPlaying = false;
 
     // Initiate deeplearn.js math and knn classifier objects
-    this.knn = new KNNImageClassifier(NUM_CLASSES, TOPK);
+    this.knn = new KNNImageClassifier(items.length, TOPK);
 
     // Create video element that will contain the webcam image
     this.video = document.createElement('video');
@@ -94,11 +92,12 @@ class Main {
 
   setupToggleView() {
     document.getElementById('view-toggle').addEventListener("click", () => this.toggleView())
+    this.toggleView()
   }
 
   toggleView() {
     this.view = this.view != "train" ? "train" : "result";
-    document.getElementById('view-toggle').innerText = this.view;
+    document.getElementById('view-toggle').innerText = this.view + "- toggle";
     for (var i = 0; i < this.infoTexts.length; i++) {
       this.infoTexts[i].innerText = ""
     }
@@ -114,8 +113,6 @@ class Main {
     this.video.play();
     this.timer = requestAnimationFrame(this.animate.bind(this));
   }
-
-
 
   stop() {
     console.log("start")
@@ -141,7 +138,7 @@ class Main {
         if (Math.max(...exampleCount) > 0) {
           this.knn.predictClass(image)
             .then((res) => {
-              for (let i = 0; i < NUM_CLASSES; i++) {
+              for (let i = 0; i < items.length; i++) {
                 // Make the predicted class bold
                 if (res.classIndex == i) {
                   this.infoTexts[i].style.fontWeight = 'bold';
@@ -155,7 +152,7 @@ class Main {
                   this.infoTexts[i].innerText = `${res.confidences[i] * 100}%`
                   this.objects = this.objects + 1;
 
-                  document.getElementById("item-" + i).style.backgroundColor = "red";
+                  document.getElementById("item-" + i).style.backgroundColor = "cyan";
                   document.getElementById("item-" + this.prediction).style.backgroundColor = "transparent";
                   this.prediction = i;
                 }

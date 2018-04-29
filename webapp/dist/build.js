@@ -27,12 +27,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// Number of classes to classify
-var NUM_CLASSES = 5;
+var items = [{ name: "watch" }, { name: "mouse" }, { name: "bottle" }, { name: "phone" }, { name: "dominos" }, { name: "nothing" }];
+
 // Webcam Image size. Must be 227. 
 var IMAGE_SIZE = 227;
 // K value for KNN
 var TOPK = 10;
+
+var threshold = 0.60;
 
 var Main = function () {
   function Main() {
@@ -40,14 +42,16 @@ var Main = function () {
 
     _classCallCheck(this, Main);
 
+    this.prediction = items.length - 1;
     this.view = "train";
+    this.objects = 0;
     // Initiate variables
     this.infoTexts = [];
     this.training = -1; // -1 when no class is being trained
     this.videoPlaying = false;
 
     // Initiate deeplearn.js math and knn classifier objects
-    this.knn = new _deeplearnKnnImageClassifier.KNNImageClassifier(NUM_CLASSES, TOPK);
+    this.knn = new _deeplearnKnnImageClassifier.KNNImageClassifier(items.length, TOPK);
 
     // Create video element that will contain the webcam image
     this.video = document.createElement('video');
@@ -61,11 +65,12 @@ var Main = function () {
 
     var _loop = function _loop(i) {
       var div = document.createElement('div');
+      div.id = "item-" + i;
       document.getElementById("training-container").appendChild(div);
 
       // Create training button
       var button = document.createElement('button');
-      button.innerText = "Train " + i;
+      button.innerText = items[i].name;
       div.appendChild(button);
 
       // Listen for mouse events when clicking the button
@@ -78,12 +83,12 @@ var Main = function () {
 
       // Create info text
       var infoText = document.createElement('span');
-      infoText.innerText = " No examples added";
+      infoText.innerText = " Noexamples added";
       div.appendChild(infoText);
       _this.infoTexts.push(infoText);
     };
 
-    for (var i = 0; i < NUM_CLASSES; i++) {
+    for (var i = 0; i < items.length; i++) {
       _loop(i);
     }
 
@@ -115,13 +120,18 @@ var Main = function () {
       document.getElementById('view-toggle').addEventListener("click", function () {
         return _this2.toggleView();
       });
+      this.toggleView();
     }
   }, {
     key: 'toggleView',
     value: function toggleView() {
       this.view = this.view != "train" ? "train" : "result";
-      document.getElementById("training-container").style.display = this.view === 'train' ? "" : "none";
-      document.getElementById("results-container").style.display = this.view === 'train' ? "" : "none";
+      document.getElementById('view-toggle').innerText = this.view + "- toggle";
+      for (var i = 0; i < this.infoTexts.length; i++) {
+        this.infoTexts[i].innerText = "";
+      }
+
+      console.log(this.view);
     }
   }, {
     key: 'start',
@@ -148,37 +158,46 @@ var Main = function () {
       if (this.videoPlaying) {
         // Get image data from video element
         var image = dl.fromPixels(this.video);
+        var exampleCount = this.knn.getClassExampleCount();
 
         // Train class if one of the buttons is held down
         if (this.training != -1) {
           // Add current image to classifier
           this.knn.addImage(image, this.training);
+          this.infoTexts[this.training].innerText = exampleCount[this.training];
         }
 
-        // If any examples have been added, run predict
-        var exampleCount = this.knn.getClassExampleCount();
-        if (Math.max.apply(Math, _toConsumableArray(exampleCount)) > 0) {
-          this.knn.predictClass(image).then(function (res) {
-            for (var i = 0; i < NUM_CLASSES; i++) {
-              // Make the predicted class bold
-              if (res.classIndex == i) {
-                _this3.infoTexts[i].style.fontWeight = 'bold';
-              } else {
-                _this3.infoTexts[i].style.fontWeight = 'normal';
-              }
+        if (this.view != "train") {
+          // If any examples have been added, run predict
+          if (Math.max.apply(Math, _toConsumableArray(exampleCount)) > 0) {
+            this.knn.predictClass(image).then(function (res) {
+              for (var i = 0; i < items.length; i++) {
+                // Make the predicted class bold
+                if (res.classIndex == i) {
+                  _this3.infoTexts[i].style.fontWeight = 'bold';
+                } else {
+                  _this3.infoTexts[i].style.fontWeight = 'normal';
+                }
+                // Update info text
+                if (exampleCount[i] > 0 && res.confidences[i] > 0.5 && _this3.prediction != i) {
+                  console.log(res, _this3.prediction);
 
-              // Update info text
-              if (exampleCount[i] > 0) {
-                _this3.infoTexts[i].innerText = ' ' + exampleCount[i] + ' examples - ' + res.confidences[i] * 100 + '%';
+                  _this3.infoTexts[i].innerText = res.confidences[i] * 100 + '%';
+                  _this3.objects = _this3.objects + 1;
+
+                  document.getElementById("item-" + i).style.backgroundColor = "cyan";
+                  document.getElementById("item-" + _this3.prediction).style.backgroundColor = "transparent";
+                  _this3.prediction = i;
+                }
               }
-            }
-          })
-          // Dispose image when done
-          .then(function () {
-            return image.dispose();
-          });
-        } else {
-          image.dispose();
+            })
+            // Dispose image when done
+            .then(function () {
+              return image.dispose();
+            });
+          } else {
+            image.dispose();
+          }
         }
       }
       this.timer = requestAnimationFrame(this.animate.bind(this));
