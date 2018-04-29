@@ -28,7 +28,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // Number of classes to classify
-var NUM_CLASSES = 3;
+var NUM_CLASSES = 5;
 // Webcam Image size. Must be 227. 
 var IMAGE_SIZE = 227;
 // K value for KNN
@@ -40,6 +40,7 @@ var Main = function () {
 
     _classCallCheck(this, Main);
 
+    this.view = "train";
     // Initiate variables
     this.infoTexts = [];
     this.training = -1; // -1 when no class is being trained
@@ -54,14 +55,13 @@ var Main = function () {
     this.video.setAttribute('playsinline', '');
 
     // Add video element to DOM
-    document.body.appendChild(this.video);
-
+    document.getElementById('video-container').appendChild(this.video);
+    console.log(document.getElementById('video-container'));
     // Create training buttons and info texts    
 
     var _loop = function _loop(i) {
       var div = document.createElement('div');
-      document.body.appendChild(div);
-      div.style.marginBottom = '10px';
+      document.getElementById("training-container").appendChild(div);
 
       // Create training button
       var button = document.createElement('button');
@@ -100,7 +100,7 @@ var Main = function () {
         return _this.videoPlaying = false;
       });
     });
-
+    this.setupToggleView();
     // Load knn model
     this.knn.load().then(function () {
       return _this.start();
@@ -108,8 +108,25 @@ var Main = function () {
   }
 
   _createClass(Main, [{
+    key: 'setupToggleView',
+    value: function setupToggleView() {
+      var _this2 = this;
+
+      document.getElementById('view-toggle').addEventListener("click", function () {
+        return _this2.toggleView();
+      });
+    }
+  }, {
+    key: 'toggleView',
+    value: function toggleView() {
+      this.view = this.view != "train" ? "train" : "result";
+      document.getElementById("training-container").style.display = this.view === 'train' ? "" : "none";
+      document.getElementById("results-container").style.display = this.view === 'train' ? "" : "none";
+    }
+  }, {
     key: 'start',
     value: function start() {
+      console.log("start");
       if (this.timer) {
         this.stop();
       }
@@ -119,13 +136,14 @@ var Main = function () {
   }, {
     key: 'stop',
     value: function stop() {
+      console.log("start");
       this.video.pause();
       cancelAnimationFrame(this.timer);
     }
   }, {
     key: 'animate',
     value: function animate() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.videoPlaying) {
         // Get image data from video element
@@ -144,14 +162,14 @@ var Main = function () {
             for (var i = 0; i < NUM_CLASSES; i++) {
               // Make the predicted class bold
               if (res.classIndex == i) {
-                _this2.infoTexts[i].style.fontWeight = 'bold';
+                _this3.infoTexts[i].style.fontWeight = 'bold';
               } else {
-                _this2.infoTexts[i].style.fontWeight = 'normal';
+                _this3.infoTexts[i].style.fontWeight = 'normal';
               }
 
               // Update info text
               if (exampleCount[i] > 0) {
-                _this2.infoTexts[i].innerText = ' ' + exampleCount[i] + ' examples - ' + res.confidences[i] * 100 + '%';
+                _this3.infoTexts[i].innerText = ' ' + exampleCount[i] + ' examples - ' + res.confidences[i] * 100 + '%';
               }
             }
           })

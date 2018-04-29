@@ -11,17 +11,83 @@
         body {
             display: flex;
             flex-flow: wrap;
-            margin: 2vh;
-            height: 96vh;
+            justify-content: space-around;
+            align-items: center;
+            margin: 0px;
         }
 
-        div {
+        span {
+            text-align: center;
+            padding: 10px;
+        }
+
+        #video-container,
+        #right-container {
+            height: 100vh;
+            width: 49%;
+        }
+
+        #video-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #47a3da;
+            overflow: hidden;
+        }
+
+        button {
+            margin: 0px;
+            background-color: transparent;
+            border: 1px solid #DADADA;
+            color: black;
+        }
+
+        #right-container button {
+            height: 6em;
+            width: 10em;
+        }
+
+        #right-container {
+            display: flex;
+            flex-flow: wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        video {
+            min-width: 60%;
+            min-height: 60%;
+        }
+
+        #view-toggle {
             width: 100%;
+            top: 10px;
+            height: 2em;
+            font-weight: bold;
+            background-color: aliceblue;
+            border: 1px solid #DADADA;
+        }
+
+        #view-toggle:hover {
+            background-color: cadetblue;
+        }
+
+        #right-container div {
+            width: 100%;
+            border: 1px solid #DADADA;
+            align-items: center;
+            margin: 0px;
         }
     </style>
 </head>
 
 <body>
+    <div id="video-container"></div>
+    <div id="right-container">
+        <button id='view-toggle'> ToggleView </button>
+        <div id="training-container">
+        </div>
+    </div>
 </body>
 
 </html>
