@@ -57,6 +57,7 @@ class Main {
     // Create training buttons and info texts    
     for (let i = 0; i < items.length; i++) {
       const div = document.createElement('div');
+      div.id = "item-" + i
       document.getElementById("training-container").appendChild(div);
 
       // Create training button
@@ -150,8 +151,12 @@ class Main {
                 // Update info text
                 if (exampleCount[i] > 0 && res.confidences[i] > 0.5 && this.prediction != i) {
                   console.log(res, this.prediction);
+
                   this.infoTexts[i].innerText = `${res.confidences[i] * 100}%`
                   this.objects = this.objects + 1;
+
+                  document.getElementById("item-" + i).style.backgroundColor = "red";
+                  document.getElementById("item-" + this.prediction).style.backgroundColor = "transparent";
                   this.prediction = i;
                 }
               }
